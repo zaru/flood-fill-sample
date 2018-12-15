@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    .menu {
+      font-size: 12px;
+      padding: 10px;
+    }
+    .menu span {
+      font-weight: bold;
+    }
+    .menu button {
+      padding: 3px 10px;
+    }
+    #canvas {
+      width: 500px;
+      height: 500px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+      background-color: #2196F3;
+      padding: 10px;
+    }
+    .cell {
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .cell[data-value="1"] {
+      background-color: rgb(255, 180, 206)
+    }
+    .cell[data-value="3"] {
+      background-color: rgb(141, 255, 135)
+    }
+    .cell::after {
+      content: attr(data-stack_count)"";
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      font-size: 10px;
+    }
+    .fade-in {
+      animation-name: faceIn;
+      animation-iteration-count: 1;
+      animation-timing-function: ease-in;
+      animation-duration: 2s;
+    }
+
+    @keyframes faceIn {
+      0% {
+        box-shadow: inset 0 0 0 #ff3399;
+      }
+      50% {
+        box-shadow: inset 0 0 20px #ff3399;
+      }
+      100% {
+        box-shadow: inset 0 0 0 #ff3399;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="menu">
+    mode: <span id="current_mode"></span>
+    <button class="switch" data-mode="slow">slow</button>
+    <button class="switch" data-mode="fast">fast</button>
+    total stack num: <span id="total_stack_num">0</span>
+  </div>
+  <div id="canvas"></div>
+  <script src="./flood_fill.js"></script>
+  <script>
+    let mode = 'slow'
+    document.getElementById('current_mode').innerText = mode
+    ;[].forEach.call(document.getElementsByClassName('switch'), elm => {
+      elm.addEventListener('click', () => {
+        mode = elm.dataset.mode
+        document.getElementById('current_mode').innerText = mode
+      })
+    })
+
+    const start = (e) => {
+      const x = Number(e.target.dataset.x)
+      const y = Number(e.target.dataset.y)
+      const floodFill = new FloodFill(data)
+      floodFill.replaceColor = 3
+      floodFill[`${mode}Fill`](x, y).then(() => {
+        document.getElementById('total_stack_num').innerText = floodFill.totalStack
+      })
+    }
+
+    const maxWidth = 5
+    const maxHeight = 5
+    const data = []
+    for (let h = 0; h < maxHeight; h++) {
+      for (let w = 0; w < maxWidth; w++) {
+        const cell = document.createElement('div')
+        cell.id = `cell-${w}-${h}`
+        cell.dataset.x = w
+        cell.dataset.y = h
+        cell.dataset.value = 0
+        cell.dataset.stack_count = 0
+        cell.className = 'cell'
+        cell.innerText = ''
+        if (!data[h]) {
+          data[h] = []
+        }
+        data[h][w] = 0
+        cell.addEventListener('click', start)
+        document.getElementById('canvas').append(cell)
+      }
+    }
+    const initFill = [
+            [0, 1],
+            [1, 0],
+            [3, 4],
+            [4, 3],
+    ]
+    initFill.forEach(point => {
+      document.getElementById(`cell-${point[0]}-${point[1]}`).dataset.value = 1
+      data[point[0]][point[1]] = 1
+    })
+  </script>
+</body>
+</html>
