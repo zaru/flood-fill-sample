@@ -8,6 +8,7 @@
     },
     "files": [
         "flood_fill.ts",
-        "flood_fill_canvas.ts"
+        "flood_fill_canvas.ts",
+        "util.ts"
     ]
 }
