@@ -4,8 +4,8 @@
   "description": "",
   "main": "fill.js",
   "scripts": {
-    "watch": "tsc -w ./*.ts",
-    "build": "tsc ./*.ts"
+    "watch": "tsc -w",
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",

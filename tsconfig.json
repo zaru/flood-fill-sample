@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "lib": [ "es6", "dom" ],
+        "sourceMap": true,
+        "declaration": true
+    },
+    "files": [
+        "flood_fill.ts",
+        "flood_fill_canvas.ts"
+    ]
+}
