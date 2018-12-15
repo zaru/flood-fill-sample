@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    *{
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      margin: 10px auto;
+      width: 600px;
+      display: flex;
+    }
+    canvas {
+      border: 1px solid #ccc;
+    }
+    .menu {
+    }
+    button {
+      padding: 3px 5px;
+      font-size: 14px;
+      background-color: #ddd;
+      display: block;
+      width: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas id="canvas"></canvas>
+    <div class="menu">
+      <button id="draw">draw</button>
+      <button id="fill">fill</button>
+    </div>
+  </div>
+  <script src="./flood_fill_canvas.js"></script>
+  <script src="./util.js"></script>
+  <script>
+    let mode = 'draw'
+    document.getElementById('draw').addEventListener('click', () => {
+      mode = 'draw'
+    })
+    document.getElementById('fill').addEventListener('click', () => {
+      mode = 'fill'
+    })
+
+    let drawing = false
+    let startX = 0
+    let startY = 0
+
+    const maxWidth = 500
+    const maxHeight = 500
+    document.getElementById('canvas').width = maxWidth
+    document.getElementById('canvas').height = maxHeight
+
+    let matrix = []
+
+    const canvas = document.getElementById('canvas')
+    const context = canvas.getContext('2d')
+    context.fillStyle = "rgba(0, 0, 0, 0)"
+    context.fillRect(0, 0, maxWidth, maxHeight)
+
+
+    const eventHandler = (e) => {
+      if (mode !== 'fill') {
+        return
+      }
+      const rect = e.target.getBoundingClientRect()
+      x = Math.round(e.clientX - rect.left)
+      y = Math.round(e.clientY - rect.top)
+      const floodFillCanvas = new FloodFillCanvas(matrix)
+      floodFillCanvas.replaceColor = '0,255,0,255'
+      const table = floodFillCanvas.fill(x, y)
+      const imageData = context.getImageData(0, 0, maxWidth, maxHeight)
+      table.forEach((row, y) => {
+        row.forEach((col, x) => {
+          const pos = floodFillCanvas.startPosition(x, y)
+          if (table[y][x] === '0,255,0,255') {
+            imageData.data[pos] = 0
+            imageData.data[pos + 1] = 255
+            imageData.data[pos + 2] = 0
+            imageData.data[pos + 3] = 255
+          }
+        })
+      })
+      context.putImageData(imageData, 0, 0)
+    }
+
+    const drawStart = (e) => {
+      if (mode !== 'draw') {
+        return
+      }
+      drawing = true
+      const rect = e.target.getBoundingClientRect()
+      x = e.clientX - rect.left
+      y = e.clientY - rect.top
+      startX = x
+      startY = y
+    }
+
+    const drawStop = () => {
+      drawing = false
+      const data = context.getImageData(0, 0, maxWidth, maxHeight).data
+      for(let i = 0; i < Math.ceil(data.length / 4); i++) {
+        const start = i * 4
+        const point = data.slice(start, start + 4)
+        matrix.push(`${point[0]},${point[1]},${point[2]},${point[3]}`)
+      }
+      matrix = chunk(matrix, maxWidth)
+    }
+
+    const draw = (e) => {
+      if (drawing) {
+        const rect = e.target.getBoundingClientRect()
+        x = e.clientX - rect.left
+        y = e.clientY - rect.top
+        context.beginPath()
+        context.strokeStyle = 'rgba(0, 0, 0, 255)'
+        context.moveTo(startX, startY)
+        context.lineTo(x, y)
+        context.stroke()
+        startX = x
+        startY = y
+      }
+    }
+    canvas.addEventListener('click', eventHandler, false)
+    canvas.addEventListener('mousedown', drawStart, false)
+    canvas.addEventListener('mousemove', draw, false)
+    canvas.addEventListener('mouseup', drawStop, false)
+  </script>
+</body>
+</html>
