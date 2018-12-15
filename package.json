@@ -1,0 +1,15 @@
+{
+  "name": "flood-fill",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fill.js",
+  "scripts": {
+    "watch": "tsc -w ./*.ts",
+    "build": "tsc ./*.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^3.2.2"
+  }
+}
