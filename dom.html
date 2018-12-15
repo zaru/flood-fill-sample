@@ -67,11 +67,13 @@
   </style>
 </head>
 <body>
+  <p>flood fill</p>
   <div class="menu">
     mode: <span id="current_mode"></span>
     <button class="switch" data-mode="slow">slow</button>
     <button class="switch" data-mode="fast">fast</button>
     total stack num: <span id="total_stack_num">0</span>
+    <button onclick="location.reload()">reset</button>
   </div>
   <div id="canvas"></div>
   <script src="./flood_fill.js"></script>
