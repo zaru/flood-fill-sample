@@ -117,14 +117,17 @@
       }
     }
     const initFill = [
-            [0, 1],
-            [1, 0],
-            [3, 4],
-            [4, 3],
+            [0, 2],
+            [1, 1],
+            [2, 0],
+            [2, 4],
+            [2, 3],
+            [3, 3],
+            [4, 1],
     ]
     initFill.forEach(point => {
       document.getElementById(`cell-${point[0]}-${point[1]}`).dataset.value = 1
-      data[point[0]][point[1]] = 1
+      data[point[1]][point[0]] = 1
     })
   </script>
 </body>

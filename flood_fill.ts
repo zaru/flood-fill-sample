@@ -16,6 +16,10 @@ class FloodFill {
     this._totalStack = 0
   }
 
+  get replaceColor() {
+    return this._replaceColor
+  }
+
   set replaceColor(replaceColor) {
     this._replaceColor = replaceColor
   }
@@ -25,8 +29,8 @@ class FloodFill {
   }
 
   async slowFill (x, y) {
-    this.push(x, y)
     this.targetColor = this.data[y][x]
+    this.push(x, y)
 
     while (this.buffer.length > 0) {
       const target = this.buffer.pop()
@@ -54,8 +58,8 @@ class FloodFill {
   }
 
   async fastFill (x, y) {
-    this.push(x, y)
     this.targetColor = this.data[y][x]
+    this.push(x, y)
 
     while (this.buffer.length > 0) {
       const target = this.buffer.pop()
@@ -80,6 +84,8 @@ class FloodFill {
       while (rightX < this.width && this.data[y][rightX] === this.targetColor) {
         this.data[y][rightX] = this.replaceColor
         await this.fillCell(rightX, y)
+        this.pushUpward(rightX, y - 1)
+        this.pushDownward(rightX, y + 1)
         rightX++
       }
 
@@ -87,15 +93,12 @@ class FloodFill {
       while (leftX >= 0 && this.data[y][leftX] === this.targetColor) {
         this.data[y][leftX] = this.replaceColor
         await this.fillCell(leftX, y)
+        this.pushUpward(leftX, y - 1)
+        this.pushDownward(leftX, y + 1)
         leftX--
       }
-
-      rightX--
-      leftX++
-      this.pushUpward(rightX, y - 1)
-      this.pushDownward(rightX, y + 1)
-      this.pushUpward(leftX, y - 1)
-      this.pushDownward(leftX, y + 1)
+      this.pushUpward(x, y - 1)
+      this.pushDownward(x, y + 1)
     }
     return this.data
   }
@@ -142,7 +145,7 @@ class FloodFill {
   }
 
   private push (x, y) {
-    if (this.checkRange(x, y)) {
+    if (this.checkRange(x, y) && this.data[y][x] === this.targetColor) {
       const elm = document.getElementById(`cell-${x}-${y}`)
       elm.dataset.stack_count = String(Number(elm.dataset.stack_count) + 1)
       elm.classList.add('fade-in')
